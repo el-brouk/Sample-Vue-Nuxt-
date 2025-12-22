@@ -1,0 +1,135 @@
+@use "variables" as *;
+@use "mixins" as *;
+
+html {
+  font-family: 'Manrope', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1;
+
+  color: $primary;
+  scroll-behavior: smooth;
+  scrollbar-gutter: stable;
+
+  body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    font-family: $main-font-family;
+    background-color: $white;
+
+    &.no-scroll {
+      overflow: hidden;
+    }
+  }
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
+}
+
+* {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  outline: none;
+}
+
+.hidden {
+  display: none;
+}
+
+.visible-xs {
+  @media (min-width: 541px) {
+    display: none !important;
+  }
+}
+
+.hidden-xs {
+  @media #{$phone} {
+    display: none !important;
+  }
+}
+
+.hidden-sm {
+  @media #{$tablet} {
+    display: none !important;
+  }
+}
+
+.visible-sm {
+  @media (min-width: 1025px) {
+    display: none !important;
+  }
+}
+
+.embed-responsive {
+  height: auto;
+  display: block;
+  overflow: hidden;
+  padding: 0;
+  position: relative;
+
+  .thumbnail {
+    height: 100%;
+    margin: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+  }
+}
+
+.embed-responsive-16by9 {
+  padding-bottom: 56.25%;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+input:not([type=checkbox]):not([type=radio]),
+textarea,
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+ul {
+  @include list-reset;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(100%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.getreview-widget>div>div {
+  z-index: 10;
+}
+
+.page-wrapper {
+  display: grid;
+  grid-template-rows: max-content 1fr max-content;
+  min-height: 100dvh;
+
+}
+
+.page-main {
+  height: 100%;
+  min-width: 0;
+  z-index: 0;
+  position: relative;
+
+}

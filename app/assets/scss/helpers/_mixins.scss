@@ -1,0 +1,270 @@
+@use 'variables' as *;
+
+@mixin placeholder {
+  ::-webkit-input-placeholder {
+    @content;
+  }
+
+  :-moz-placeholder {
+    @content;
+  }
+
+  ::-moz-placeholder {
+    @content;
+  }
+
+  :-ms-input-placeholder {
+    @content;
+  }
+}
+
+@mixin list-reset {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+@mixin indent-reset {
+  padding: 0;
+  margin: 0;
+}
+
+@mixin cover-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-position: center;
+  object-fit: cover;
+}
+
+@mixin contain-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-position: center;
+  object-fit: contain;
+}
+
+@mixin centered($axis: 'both') {
+  position: absolute;
+
+  @if $axis == 'both' {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  @if $axis == 'x' {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  @if $axis == 'y' {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}
+
+@mixin text-clamp($lines: 2) {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: $lines;
+  text-overflow: ellipsis;
+}
+
+@mixin hover {
+  @media (min-width: 1025px) {
+    &:hover {
+      @content;
+    }
+  }
+}
+
+@mixin button-reset {
+  padding: 0;
+  border: none;
+  font: inherit;
+  color: inherit;
+  background-color: transparent;
+  cursor: pointer;
+  outline: none;
+}
+
+@mixin desktop-only {
+  @media screen and #{$onlyDesktop} {
+    @content;
+  }
+}
+
+@mixin desktop-xl {
+  @media screen and #{$xlDesktop} {
+    @content;
+  }
+}
+
+@mixin desktop-lg {
+  @media screen and #{$lgDesktop} {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media screen and #{$desktop} {
+    @content;
+  }
+}
+
+@mixin desktop-md {
+  @media screen and #{$mdDesktop} {
+    @content;
+  }
+}
+
+@mixin desktop-sm {
+  @media screen and #{$smDesktop} {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media screen and #{$tablet} {
+    @content;
+  }
+}
+
+@mixin tablet-md {
+  @media screen and #{$mdTablet} {
+    @content;
+  }
+}
+
+@mixin tablet-sm {
+  @media screen and #{$smTablet} {
+    @content;
+  }
+}
+
+@mixin phone-lg {
+  @media screen and #{$lgPhone} {
+    @content;
+  }
+}
+
+@mixin phone {
+  @media screen and #{$phone} {
+    @content;
+  }
+}
+
+@mixin phone-sm {
+  @media screen and #{$smPhone} {
+    @content;
+  }
+}
+
+.visible-xs {
+  @media (min-width: 541px) {
+    display: none !important;
+  }
+}
+
+.hidden-xs {
+  @media #{$phone} {
+    display: none !important;
+  }
+}
+
+.visible-s {
+  @media (min-width: 768px) {
+    display: none !important;
+  }
+}
+
+.hidden-s {
+  @media #{$smTablet} {
+    display: none !important;
+  }
+}
+
+.hidden-sm {
+  @media #{$tablet} {
+    display: none !important;
+  }
+}
+
+@mixin size($width, $height: $width) {
+  width: $width;
+  height: $height;
+}
+
+@mixin no-scrollbar {
+  &::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+
+  @supports (-moz-appearance: auto) {
+    scrollbar-width: none;
+  }
+}
+
+@mixin scrollbar(
+  $size: 4px,
+  $foreground-color: rgba($primary, 0.6),
+  $background-color: $neutrals100,
+  $border-radius: 4px
+) {
+  &::-webkit-scrollbar {
+    width: $size;
+    height: $size;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: $foreground-color;
+    border-radius: $border-radius;
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: $background-color;
+    border-radius: $border-radius;
+  }
+
+  @supports (-moz-appearance: auto) {
+    scrollbar-width: thin;
+    scrollbar-color: $foreground-color $background-color;
+  }
+}
+
+@mixin adaptiveFull($property, $startSize, $midSize, $endSize) {
+  $addSizeMid: $startSize - $midSize;
+  $addSizeEnd: $midSize - $endSize;
+
+  & {
+    #{$property}: $startSize + px;
+  }
+
+  @media (max-width: #{$startWidth + px}) {
+    #{$property}: calc(
+      #{$midSize + px} + #{$addSizeMid} * ((100vw - #{$midWidth + px}) / #{$startWidth - $midWidth})
+    );
+  }
+
+  @media (max-width: #{$midWidth + px}) {
+    #{$property}: calc(
+      #{$endSize + px} + #{$addSizeEnd} * ((100vw - #{$endWidth + px}) / #{$midWidth - $endWidth})
+    );
+  }
+}
+
+@mixin adaptiveDesktopToMobile($property, $startSize, $endSize) {
+  $addSize: $startSize - $endSize;
+  #{$property}: $startSize + px;
+
+  @media (max-width: #{$startWidth + px}) {
+    #{$property}: calc(
+      #{$endSize + px} + #{$addSize} * ((100vw - #{$endWidth + px}) / #{$startWidth - $endWidth})
+    );
+  }
+}
