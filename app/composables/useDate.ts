@@ -96,8 +96,8 @@ export function convertTZ(date: Date | string, tzString = 'Europe/Moscow') {
   if (typeof date === 'string') {
     date = normalizeDateString(date);
   }
-  // Примечание: для реальной конвертации часового пояса нужно использовать библиотеку типа date-fns-tz
-  // Сейчас функция просто нормализует строку и создает Date объект
-  // Параметр tzString оставлен для обратной совместимости, но не используется
+  // Note: for real timezone conversion, use a library like date-fns-tz
+  // Currently the function just normalizes the string and creates a Date object
+  // The tzString parameter is kept for backward compatibility but not used
   return new Date(date);
 }

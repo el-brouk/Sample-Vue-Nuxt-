@@ -1,45 +1,32 @@
 <script lang="ts" setup>
 import type { Pagination } from '~/model/pagination';
-// Props
-const props = withDefaults(
-  defineProps<{
-    modelValue: Pagination;
-  }>(),
-  {
-    modelValue: () => {
-      return {
-        page: 0,
-        count: 0,
-        countPages: 0,
-        countElements: 0,
-      };
-    },
-  }
-);
 
-// Emitter
-const emit = defineEmits(['update:model-value']);
-const modelValue = ref(props.modelValue);
+const emit = defineEmits(['input']);
 
-const updatePage = (page: number) => {
-  props.modelValue.page = page;
-  emit('update:model-value', props.modelValue);
-};
+const props = defineProps<{
+  pagination: Pagination;
+}>();
+
+function click(page: number) {
+  props.pagination.page = page;
+  emit('input', props.pagination);
+}
 </script>
 
 <template>
   <vue-awesome-paginate
-    v-if="modelValue && modelValue.countPages > 1"
-    :total-items="modelValue.countPages"
+    v-if="pagination && pagination.countPages > 1"
+    :total-items="pagination.countPages"
     :items-per-page="1"
     :max-pages-shown="10"
-    v-model="modelValue.page"
-    @update:modelValue="updatePage"
+    v-model="pagination.page"
+    @click="click"
   />
 </template>
 
-<style lang="scss" scoped>
+<style lang="scss">
 @use '@/assets/scss/helpers/_variables' as *;
+@use '@/assets/scss/helpers/_mixins' as *;
 
 .pagination-container {
   display: flex;
@@ -47,6 +34,7 @@ const updatePage = (page: number) => {
 }
 
 .paginate-buttons {
+  @include button-reset;
   height: 40px;
   width: 40px;
   border-radius: 20px;
@@ -61,7 +49,7 @@ const updatePage = (page: number) => {
 }
 
 .active-page {
-  background-color: #3498db;
+  background: $main-gradient;
   border: 1px solid #3498db;
   color: white;
 }

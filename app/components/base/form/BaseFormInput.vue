@@ -21,7 +21,10 @@
         </label>
         <div
           class="base-input__inner"
-          v-bind:class="{ 'base-input__inner--mark': schema.mark, 'base-input__inner--focus': focused }"
+          v-bind:class="{
+            'base-input__inner--mark': schema.mark,
+            'base-input__inner--focus': focused,
+          }"
         >
           <input
             class="base-input__control"
@@ -73,9 +76,9 @@
 </template>
 
 <script setup>
-import { useField, ErrorMessage } from 'vee-validate'
+import { useField, ErrorMessage } from 'vee-validate';
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue']);
 
 const props = defineProps({
   schema: {
@@ -95,45 +98,45 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-})
+});
 
-const labelShow = ref(false)
-const typeChange = ref(false)
-const focused = ref(false)
+const labelShow = ref(false);
+const typeChange = ref(false);
+const focused = ref(false);
 
 const getFormattedValue = (modifiedValue, placeholder) => {
-  if (!modifiedValue || !props.formatted) return modifiedValue
+  if (!modifiedValue || !props.formatted) return modifiedValue;
 
   let newValue = parseFloat(modifiedValue.toString())
     .toFixed(0)
-    .replace(/(\d)(?=(\d{3})+(?:\.\d+)?$)/g, '$1 ')
+    .replace(/(\d)(?=(\d{3})+(?:\.\d+)?$)/g, '$1 ');
 
-  return placeholder ? placeholder + ' ' + newValue : newValue
-}
+  return placeholder ? placeholder + ' ' + newValue : newValue;
+};
 
-const getValue = (modifiedValue) => normalize(modifiedValue)
+const getValue = (modifiedValue) => normalize(modifiedValue);
 
 const changeValue = (event) => {
-  emit('update:modelValue', getValue(event.target.value))
-}
+  emit('update:modelValue', getValue(event.target.value));
+};
 
 const normalize = (modifiedValue) => {
-  if (!modifiedValue || !props.formatted) return modifiedValue
+  if (!modifiedValue || !props.formatted) return modifiedValue;
 
-  let newValue = parseFloat(modifiedValue.toString().replace(/[^\d\.]/g, ''))
+  let newValue = parseFloat(modifiedValue.toString().replace(/[^\d\.]/g, ''));
 
-  return isNaN(newValue) ? 0 : newValue
-}
+  return isNaN(newValue) ? 0 : newValue;
+};
 
 const focus = () => {
-  labelShow.value = true
-  focused.value = true
-}
+  labelShow.value = true;
+  focused.value = true;
+};
 
 const blur = () => {
-  labelShow.value = false
-  focused.value = false
-}
+  labelShow.value = false;
+  focused.value = false;
+};
 </script>
 
 <style lang="scss" scoped>
@@ -169,7 +172,7 @@ input:-webkit-autofill {
       background: #f0f0f0;
 
       &::placeholder {
-        color: $gray;
+        color: $dark;
       }
     }
   }
@@ -178,25 +181,19 @@ input:-webkit-autofill {
     border: 0;
 
     .base-input__inner {
-      border: 1px solid $terracotta;
+      border: 1px solid red;
     }
 
     .base-input__label {
-      color: $dark-gray;
+      color: $dark;
     }
-  }
-
-  &--valid {
-    // .base-input__label {
-    //   font-size: 12px;
-    // }
   }
 }
 
 .base-input__wrap:not(.base-input__wrap--error).base-input__wrap--valid {
   .base-input__controls--check {
     :deep(.nuxt-icon svg) {
-      // color: #f26501;
+      color: #f26501;
     }
   }
 }
@@ -224,7 +221,7 @@ input:-webkit-autofill {
 }
 
 .base-input__inner--focus {
-  border: 1px solid $accent;
+  border: 1px solid $gold;
 }
 
 .base-input__control {

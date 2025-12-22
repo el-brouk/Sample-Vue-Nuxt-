@@ -29,7 +29,7 @@ export const useApiFetch: useFetchType = (path, options = {}) => {
     debugLog.ssr = false;
   }
 
-  // Создаем новый объект options чтобы не мутировать исходный
+  // Create new options object to avoid mutating the original
   const fetchOptions: any = {
     ...options,
     watch: false as const,
@@ -43,7 +43,7 @@ export const useApiFetch: useFetchType = (path, options = {}) => {
       /** @ts-ignore */
       options.baseURL = config.public.apiUrl;
       if (token && token.value) {
-        // Объединяем заголовки, чтобы не потерять существующие
+        // Merge headers to preserve existing ones
         const existingHeaders = options.headers || {};
         options.headers = {
           ...existingHeaders,

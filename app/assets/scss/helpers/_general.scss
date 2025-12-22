@@ -1,5 +1,5 @@
-@use "variables" as *;
-@use "mixins" as *;
+@use 'variables' as *;
+@use 'mixins' as *;
 
 html {
   font-family: 'Manrope', sans-serif;
@@ -90,7 +90,7 @@ img {
   height: auto;
 }
 
-input:not([type=checkbox]):not([type=radio]),
+input:not([type='checkbox']):not([type='radio']),
 textarea,
 select {
   -webkit-appearance: none;
@@ -115,7 +115,7 @@ ul {
   border: 0;
 }
 
-.getreview-widget>div>div {
+.getreview-widget > div > div {
   z-index: 10;
 }
 
@@ -123,7 +123,6 @@ ul {
   display: grid;
   grid-template-rows: max-content 1fr max-content;
   min-height: 100dvh;
-
 }
 
 .page-main {
@@ -131,5 +130,21 @@ ul {
   min-width: 0;
   z-index: 0;
   position: relative;
+}
 
+.page__title {
+  margin-bottom: 32px;
+  font-size: 52px;
+  font-weight: 500;
+  line-height: 120%;
+  text-transform: uppercase;
+
+  @media #{$tablet} {
+    margin-bottom: 8px;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 29px;
+    letter-spacing: -1.62px;
+  }
 }

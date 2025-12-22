@@ -1,44 +1,34 @@
 <script lang="ts" setup>
 import type { SchemaItem, SelectItem } from '~/model/form';
+import { OnClickOutside } from '@vueuse/components';
 
-const props = withDefaults(
-  defineProps<{
-    schema: SchemaItem;
-    modelValue: SelectItem | SelectItem[] | null;
-    list: SelectItem[];
-    multiple: boolean;
-    filter: boolean;
-    icon: string;
-    search: boolean;
-    showValue: boolean;
-    showCount: boolean;
-  }>(),
-  {
-    list: () => [],
-    modelValue: null,
-    schema: () => {
-      return {
-        name: 'name',
-      };
-    },
-    multiple: false,
-    filter: false,
-    icon: '',
-    search: false,
-    showValue: false,
-    showCount: false,
-  }
-);
+interface Props {
+  schema: SchemaItem;
+  modelValue: string | string[] | null;
+  list: SelectItem[];
+  label?: string;
+  placeholder?: string;
+  multiple?: boolean;
+  search?: boolean;
+  showValue?: boolean;
+  showCount?: boolean;
+  border?: boolean;
+  orange?: boolean;
+}
 
-let modelValue = ref(props.modelValue);
-let filter = ref(props.filter);
-let schema = ref(props.schema);
-let multiple = ref(props.multiple);
-let list = ref(props.list);
+const props = withDefaults(defineProps<Props>(), {
+  search: false,
+  showValue: true,
+  showCount: false,
+  border: false,
+  orange: false,
+});
+
+const emit = defineEmits(['update:model-value']);
+
+let modelValue = computed<string | string[] | null>(() => props.modelValue);
 let opened = ref<boolean>(false);
 let searchValue = ref<string>('');
-
-const emit = defineEmits(['update:modelValue']);
 
 const schemaFields = {
   search: {
@@ -59,23 +49,22 @@ const schemaFields = {
   },
 };
 
-const selectedItemsLabel = () => {
-  if (!multiple.value || !modelValue.value) {
+const selectedItemsLabel = computed(() => {
+  if (!props.multiple || !modelValue.value) {
     return null;
   }
 
-  /** @ts-ignore */
-  let value = modelValue.value as Array<string | number>;
-  let labels: string[] = [];
+  const value = modelValue.value as Array<string | number>;
+  let labels: Array<string> = [];
 
   if (value.length === 0) {
-    list.value.forEach((item) => {
+    props.list.forEach((item) => {
       if (item.value === null) {
         labels = [item.title];
       }
     });
   } else {
-    list.value.forEach((item) => {
+    props.list.forEach((item) => {
       if (item.value !== null && value.includes(item.value)) {
         labels.push(item.title);
       }
@@ -83,88 +72,90 @@ const selectedItemsLabel = () => {
   }
 
   return labels.join(', ');
-};
+});
 
-const selectedItem = (): SelectItem | null => {
-  if (multiple) {
+const selectedItem = computed(() => {
+  if (props.multiple) {
     return null;
   }
 
   let selectedItem = null;
-  if (list) {
-    list.value.forEach((item) => {
-      /** @ts-ignore */
-      if (modelValue.value && item.value === modelValue.value.value) {
+
+  // Get the actual value - handle both string and array cases
+  let actualValue: string | number | null = null;
+  if (Array.isArray(modelValue.value)) {
+    actualValue = modelValue.value.length > 0 ? modelValue.value[0] : null;
+  } else {
+    actualValue = modelValue.value;
+  }
+
+  if (props.list && actualValue !== null) {
+    props.list.forEach((item) => {
+      if (item.value === actualValue) {
         selectedItem = item;
       }
     });
   }
 
   return selectedItem;
-};
+});
 
-const selectItems = (): SelectItem[] => {
+const selectItems = computed(() => {
   if (searchValue.value === '') {
-    return list.value;
+    return props.list;
   }
-  return list.value.filter((item) => {
+  return props.list.filter((item) => {
     return item.title.toLocaleLowerCase().match(searchValue.value.toLocaleLowerCase());
   });
-};
+});
 
-function itemSelected(item: SelectItem) {
+const itemSelected = (item: SelectItem) => {
   if (!modelValue.value) {
     return false;
   }
 
-  if (multiple.value) {
-    /** @ts-ignore */
-    let value = modelValue.value as Array<string | number>;
-    if (item.value === null) {
-      return value.length === 0;
-    }
-    return value.includes(item.value);
+  // if (props.multiple) {
+  const value = modelValue.value as Array<string | number>;
+  if (item.value === null) {
+    return value.length === 0;
   }
+  return value.includes(item.value);
+  // }
 
-  /** @ts-ignore */
-  return item.value == modelValue.value.value;
-}
+  // return item.value == modelValue.value;
+};
 
 function selectItem(item: SelectItem) {
-  if (multiple.value) {
+  if (props.multiple) {
     if (item.value === null) {
-      return emit('update:modelValue', []);
+      return emit('update:model-value', []);
     }
-    /** @ts-ignore */
-    const value = modelValue.value as Array<string | number>;
+    const value = props.modelValue as Array<string | number>;
     if (value.includes(item.value)) {
       emit(
-        'update:modelValue',
+        'update:model-value',
         value.filter((i) => item.value !== i)
       );
     } else {
-      emit('update:modelValue', [
-        /** @ts-ignore */
-        ...(modelValue.value as Array<string | number>),
-        item.value,
-      ]);
+      emit('update:model-value', [...(props.modelValue as Array<string | number>), item.value]);
     }
   } else {
     close();
-    emit('update:modelValue', item.value);
+    emit('update:model-value', item.value);
   }
 }
 
-function changeValue(event: any) {
-  emit('update:modelValue', event.target.value);
-}
+const changeValue = (event: any) => {
+  emit('update:model-value', event.target.value);
+};
 
-function toggle() {
-  if (schema.value.disabled) {
+const toggle = () => {
+  if (props.schema.disabled) {
     return;
   }
+
   opened.value = !opened.value;
-}
+};
 
 function close() {
   opened.value = false;
@@ -174,15 +165,11 @@ function close() {
 function isSelected(item: SelectItem): boolean {
   return itemSelected(item);
 }
-
-function click(item: SelectItem) {
-  emit('update:modelValue', item);
-}
 </script>
 
 <template>
   <OnClickOutside @trigger="close">
-    <div class="base-select" :class="['base-form-select', { 'base-form-select--filter': filter }]">
+    <div class="base-select base-form-select">
       <Field
         class="base-select__control"
         :name="schema.name ?? ''"
@@ -208,16 +195,7 @@ function click(item: SelectItem) {
               <span class="base-form-select__value">{{ selectedItemsLabel }}</span>
             </template>
             <template v-else-if="selectedItem">
-              {{ selectedItem }}
-              <!--              <span class="base-form-select__icon" v-if="selectedItem && selectedItem.icon">-->
-              <!--                <base-icon :icon="selectedItem.icon"/>-->
-              <!--              </span>-->
-              <!--              <span class="base-form-select__icon" v-else-if="selectedItem && icon">-->
-              <!--                <base-icon :icon="icon"/>-->
-              <!--              </span>-->
-              <!--              <span class="base-form-select__placeholder" v-if="selectedItem && showValue">-->
-              <!--                {{ selectedItem.title }}-->
-              <!--              </span>-->
+              {{ selectedItem.title }}
             </template>
             <span
               class="base-form-select__placeholder"
@@ -227,10 +205,12 @@ function click(item: SelectItem) {
             <base-icon class="base-form-select__toggler" icon="arrow-down" />
           </div>
         </div>
+        <!-- <pre>{{ selectItems }}</pre> -->
         <div class="base-form-select__dropdown" v-show="opened">
           <div class="base-form-select__dropdown-search" v-if="search">
             <base-form-input v-model="searchValue" :schema="schemaFields.search" />
           </div>
+
           <ul class="base-form-select__list">
             <li
               class="base-form-select__item"
@@ -238,10 +218,8 @@ function click(item: SelectItem) {
               :key="index"
               v-bind:class="{ 'base-form-select__item--active': isSelected(item) }"
             >
-              <span @click="selectItem(item)" style="width: 100%" v-if="item">
-                {{ item }}
-                <!--                <span class="base-form-select__option" v-if="item.title">{{ item.title }}</span>-->
-                <!--                <span class="base-form-select__desc" v-if="item.description">{{ item.description }}</span>-->
+              <span @click="selectItem(item)" v-if="item">
+                {{ item.title }} ({{ item.count }})
               </span>
             </li>
           </ul>
@@ -260,124 +238,6 @@ function click(item: SelectItem) {
   position: relative;
   display: block;
   text-align: left;
-
-  &--border {
-    .base-form-select__control {
-      padding: 7px 12px;
-      border: 1px solid #0000003b;
-      border-radius: 4px;
-
-      @media (hover: hover) {
-        &:hover:not(&.disabled) {
-          border: 1px solid $dark-gray;
-
-          .base-form-select__label {
-            color: $dark-gray;
-          }
-
-          .base-form-select__toggler {
-            color: $dark-gray;
-          }
-        }
-      }
-
-      &.active {
-        border: 1px solid $dark-gray;
-
-        .base-form-select__label {
-          color: $dark-gray;
-        }
-
-        .base-form-select__toggler {
-          color: $dark-gray;
-          transform: rotate(180deg);
-        }
-      }
-
-      &.disabled {
-        border: 1px dashed #0000003b;
-
-        .base-form-select__label {
-          color: $dark-gray;
-        }
-
-        .base-form-select__value {
-          color: $dark-gray;
-        }
-
-        .base-form-select__placeholder {
-          color: $dark-gray;
-        }
-
-        .base-form-select__toggler {
-          color: $dark-gray;
-        }
-      }
-    }
-
-    .base-form-select__label {
-      top: -5px;
-      left: 12px;
-      padding: 0 5px;
-      color: rgba(0, 0, 0, 0.6);
-      background: $white;
-    }
-  }
-
-  &--orange {
-    .base-form-select__control {
-      padding: 0;
-      border-bottom: 0;
-      color: $dark-gray;
-
-      @media (hover: hover) {
-        &:hover:not(&.disabled) {
-          border-bottom: 0;
-
-          .base-form-select__label {
-            color: $dark-gray;
-          }
-
-          .base-form-select__toggler {
-            color: $dark-gray;
-          }
-        }
-      }
-
-      &.active {
-        border-bottom: 0;
-
-        .base-form-select__label {
-          color: $dark-gray;
-        }
-
-        .base-form-select__toggler {
-          color: $dark-gray;
-        }
-      }
-    }
-
-    .base-form-select__placeholder {
-      color: $dark-gray;
-    }
-
-    .base-form-select__toggler {
-      color: $dark-gray;
-    }
-
-    .base-form-select__dropdown {
-      padding: 8px 0;
-      min-width: auto;
-    }
-
-    .base-form-select__item {
-      padding: 6px 16px;
-    }
-
-    .base-form-select__list {
-      max-height: 216px;
-    }
-  }
 }
 
 .base-form-select__label {
@@ -407,7 +267,7 @@ function click(item: SelectItem) {
   border-radius: 0;
   border: 0;
   background-color: transparent;
-  border-bottom: 1px solid $dark-gray;
+  border-bottom: 1px solid $dark;
   cursor: pointer;
   font-size: 16px;
   line-height: 24px;
@@ -416,27 +276,27 @@ function click(item: SelectItem) {
 
   @media (hover: hover) {
     &:hover:not(&.disabled) {
-      border-bottom: 1px solid $dark-gray;
+      border-bottom: 1px solid $dark;
 
       .base-form-select__label {
-        color: $dark-gray;
+        color: $dark;
       }
 
       .base-form-select__toggler {
-        color: $dark-gray;
+        color: $dark;
       }
     }
   }
 
   &.active {
-    border-bottom: 1px solid $dark-gray;
+    border-bottom: 1px solid $dark;
 
     .base-form-select__label {
-      color: $dark-gray;
+      color: $dark;
     }
 
     .base-form-select__toggler {
-      color: $dark-gray;
+      color: $dark;
       transform: rotate(180deg);
     }
   }
@@ -445,19 +305,19 @@ function click(item: SelectItem) {
     border-bottom: 1px dashed #0000003b;
 
     .base-form-select__label {
-      color: $dark-gray;
+      color: $dark;
     }
 
     .base-form-select__value {
-      color: $dark-gray;
+      color: $dark;
     }
 
     .base-form-select__placeholder {
-      color: $dark-gray;
+      color: $dark;
     }
 
     .base-form-select__toggler {
-      color: $dark-gray;
+      color: $dark;
     }
   }
 }
@@ -535,19 +395,19 @@ function click(item: SelectItem) {
   justify-content: flex-start;
   padding: 9px 12px;
   cursor: pointer;
-  color: $dark-gray;
+  color: $dark;
 
   @media (hover: hover) {
     &:hover {
       input:not(:checked) + .base-form-select__checkbox-text {
         &::before {
-          border: 2px solid $dark-gray;
+          border: 2px solid $dark;
         }
       }
 
       input:checked + .base-form-select__checkbox-text::before {
-        border-color: $dark-gray;
-        background-color: $dark-gray;
+        border-color: $dark;
+        background-color: $dark;
       }
     }
   }
@@ -555,12 +415,12 @@ function click(item: SelectItem) {
   &:active {
     input:not(:checked) + .base-form-select__checkbox-text {
       &::before {
-        border: 2px solid $dark-gray;
+        border: 2px solid $dark;
       }
 
       input:checked + .base-form-select__checkbox-text::before {
-        border-color: $dark-gray;
-        background-color: $dark-gray;
+        border-color: $dark;
+        background-color: $dark;
       }
     }
   }
@@ -568,13 +428,13 @@ function click(item: SelectItem) {
   &:disabled {
     .base-form-select__checkbox-text {
       &::before {
-        border: 2px solid $dark-gray;
+        border: 2px solid $dark;
       }
     }
 
     input:checked + .base-form-select__checkbox-text::before {
-      border-color: $dark-gray;
-      background-color: $dark-gray;
+      border-color: $dark;
+      background-color: $dark;
     }
   }
 }
@@ -591,7 +451,7 @@ function click(item: SelectItem) {
 .base-select__error {
   margin-top: 3px;
   display: block;
-  color: $dark-gray;
+  color: $dark;
   font-size: 12px;
   font-weight: 400;
   line-height: 16.8px;
@@ -624,10 +484,10 @@ input[type='checkbox'] {
 }
 
 input:checked + .base-form-select__checkbox-text::before {
-  background-color: $dark-gray;
+  background-color: $dark;
   background-image: url("data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12.0002 21.5598L6.44021 15.9998L4.54688 17.8798L12.0002 25.3331L28.0002 9.33312L26.1202 7.45312L12.0002 21.5598Z' fill='white'/%3E%3C/svg%3E%0A");
   background-size: 18px 18px;
   background-repeat: no-repeat;
-  border-color: $dark-gray;
+  border-color: $dark;
 }
 </style>

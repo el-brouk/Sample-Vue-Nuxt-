@@ -35,6 +35,7 @@ A modern, full-featured Nuxt 3 application built with TypeScript, featuring auth
 - **vue-awesome-paginate** - Pagination component
 - **@nuxtjs/device** - Device detection module
 - **nuxt-storage** - Storage utilities for Nuxt
+- **@vueform/slider** - Range slider component for filters
 
 ## 📁 Project Structure
 
@@ -43,6 +44,7 @@ Sample-Vue+Nuxt/
 ├── app/
 │   ├── api/                    # API type definitions and utilities
 │   │   ├── main.ts
+│   │   ├── catalog.ts           # Catalog API types
 │   │   └── security.ts
 │   ├── assets/                 # Static assets
 │   │   ├── js/                 # JavaScript files (e.g., countries.js)
@@ -56,6 +58,7 @@ Sample-Vue+Nuxt/
 │   │   │   ├── collapse/       # Collapsible content
 │   │   │   ├── cookie/         # Cookie consent
 │   │   │   ├── filter/         # Filter components
+│   │   │   └── BaseFilterRange.vue  # Range slider filter
 │   │   │   ├── form/           # Form input components
 │   │   │   ├── icon/           # Icon component
 │   │   │   ├── loader/         # Loading spinner
@@ -63,6 +66,11 @@ Sample-Vue+Nuxt/
 │   │   │   ├── tabs/           # Tab navigation
 │   │   │   ├── text/           # Text utilities
 │   │   │   └── tooltip/        # Tooltip component
+│   │   ├── block/               # Block components (page-specific)
+│   │   │   ├── catalog/         # Catalog block components
+│   │   │   │   └── BlockCatalogFilters.vue
+│   │   │   └── product/         # Product block components
+│   │   │       └── BlockProductCard.vue
 │   │   ├── form/               # Form-specific components
 │   │   ├── layout/             # Layout components
 │   │   │   └── default/        # Default layout (header, footer)
@@ -73,29 +81,35 @@ Sample-Vue+Nuxt/
 │   │   ├── useDeclension.ts    # Word declension utilities
 │   │   ├── useModal.ts         # Modal management
 │   │   ├── usePrice.ts         # Price formatting
-│   │   └── useScrollLock.ts    # Scroll lock utilities
+│   │   ├── useScrollLock.ts    # Scroll lock utilities
+│   │   └── useUrlFilters.ts    # URL filter management for catalog
 │   ├── layouts/                # Nuxt layouts
 │   │   └── default.vue         # Default layout template
 │   ├── model/                  # TypeScript type definitions
 │   │   ├── breadcrumbs.ts
 │   │   ├── country.ts
 │   │   ├── debug.ts
+│   │   ├── filter.ts            # Filter types and interfaces
 │   │   ├── form.ts
 │   │   ├── main.ts
 │   │   ├── modal.ts
 │   │   ├── pagination.ts
 │   │   ├── picture.ts
+│   │   ├── product.ts           # Product card types
 │   │   ├── schema.ts
 │   │   ├── seo.ts
 │   │   └── tabs.ts
 │   ├── pages/                  # Nuxt pages (file-based routing)
-│   │   └── index.vue           # Home page
+│   │   ├── index.vue           # Home page
+│   │   └── catalog/            # Catalog pages
+│   │       └── index.vue       # Catalog listing page
 │   ├── plugins/                # Nuxt plugins
 │   │   ├── maska.ts            # Input mask plugin
 │   │   ├── vue-awesome-paginate.ts
 │   │   └── vue-final-modal.ts  # Modal plugin
 │   └── store/                  # Pinia stores
 │       ├── app.ts              # Global app state
+│       ├── catalog.ts          # Catalog products and filters
 │       ├── debug.ts            # Debug logging
 │       ├── main.ts             # Main page data
 │       ├── security.ts         # Security/auth state
@@ -240,6 +254,10 @@ bun run generate
 The project uses Pinia stores for state management:
 
 - **app.ts** - Global application state (breadcrumbs, search, debug mode)
+- **catalog.ts** - Catalog store (products list, filters, pagination)
+  - Fetches catalog filters and products
+  - Handles pagination
+  - Supports filtering with query parameters
 - **main.ts** - Main page data and API calls
 - **seo.ts** - SEO metadata management (title, description, keywords, canonical)
 - **security.ts** - Authentication and security operations (registration, password recovery, profile editing)
@@ -277,6 +295,12 @@ Reusable composables provide common functionality:
   - Lock/unlock page scrolling
   - Toggle scroll state
 - **useModal** - Modal management (currently minimal implementation)
+- **useUrlFilters** - URL-based filter management for catalog
+  - Parse filters from URL query parameters
+  - Apply filters to URL
+  - Clear filters from URL
+  - Handle pagination in URL
+  - Supports array filters and range filters (min/max)
 
 ### Authentication
 
@@ -297,6 +321,16 @@ Reusable components located in `app/components/base/`:
 - UI elements (button, icon, loader, tooltip)
 - Navigation (breadcrumbs, tabs, pagination)
 - Interactive (collapse, modal, filter)
+- Filter components (range slider with @vueform/slider)
+
+#### Block Components
+
+Page-specific block components located in `app/components/block/`:
+
+- **catalog/** - Catalog-specific blocks
+  - `BlockCatalogFilters` - Filter sidebar with multiple filter types (dropdowns, checkboxes, ranges)
+- **product/** - Product-specific blocks
+  - `BlockProductCard` - Product card with image, price, favorites, and comparison
 
 #### Layout Components
 
@@ -337,6 +371,33 @@ The project includes Russian language support:
 - Word declension utilities for proper Russian grammar
 - Date formatting with Russian locale
 
+### Catalog System
+
+The catalog page (`/catalog`) provides a full-featured product listing:
+
+- **Filtering System**:
+  - Dropdown filters (displayType: 'P')
+  - Checkbox group filters (displayType: 'F')
+  - Range slider filters (displayType: 'R') using @vueform/slider
+  - Filter state synchronized with URL query parameters
+  - Apply/Reset filter controls
+- **Product Listing**:
+  - Grid layout (2 columns desktop, 1 column mobile)
+  - Product cards with image, name, price, old price
+  - Favorites and comparison buttons
+  - Add to cart functionality
+- **Pagination**:
+  - Server-side pagination support
+  - Page state in URL
+  - Integration with Vue Awesome Paginate
+- **Responsive Design**:
+  - Desktop: Sidebar filters
+  - Mobile: Fixed filter button opening modal overlay
+- **Data Fetching**:
+  - SSR-safe with `onServerPrefetch`
+  - Client fallback with `onMounted`
+  - Filter and pagination state from URL on initial load
+
 ## 📝 Key Features
 
 - ✅ TypeScript support with type checking
@@ -356,6 +417,13 @@ The project includes Russian language support:
 - ✅ Scroll lock management
 - ✅ Breadcrumb navigation
 - ✅ Cookie consent component
+- ✅ **Catalog page with advanced filtering**
+  - Product listing with pagination
+  - Multiple filter types (dropdowns, checkboxes, range sliders)
+  - URL-based filter state management
+  - Responsive filter sidebar (desktop) / modal (mobile)
+  - Product cards with favorites and comparison
+  - SSR/CSR safe data fetching
 
 ## 🔧 Configuration
 

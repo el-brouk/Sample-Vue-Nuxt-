@@ -1,16 +1,16 @@
 // Media
-$onlyDesktop : '(min-width: 1025px)';
-$xlDesktop : '(max-width: 1920px)';
-$lgDesktop : '(max-width: 1600px)';
-$desktop : '(max-width: 1440px)';
-$mdDesktop : '(max-width: 1366px)';
-$smDesktop : '(max-width: 1280px)';
-$tablet : '(max-width: 1024px)';
-$mdTablet : '(max-width: 860px)';
-$smTablet : '(max-width: 768px)';
-$lgPhone : '(max-width: 640px)';
-$phone : '(max-width: 540px)';
-$smPhone : '(max-width: 448px)';
+$onlyDesktop: '(min-width: 1025px)';
+$xlDesktop: '(max-width: 1920px)';
+$lgDesktop: '(max-width: 1600px)';
+$desktop: '(max-width: 1440px)';
+$mdDesktop: '(max-width: 1366px)';
+$smDesktop: '(max-width: 1280px)';
+$tablet: '(max-width: 1024px)';
+$mdTablet: '(max-width: 860px)';
+$smTablet: '(max-width: 768px)';
+$lgPhone: '(max-width: 640px)';
+$phone: '(max-width: 540px)';
+$smPhone: '(max-width: 448px)';
 
 $startWidth: 1440;
 $midWidth: 768;
@@ -21,24 +21,25 @@ $main-font-family: 'Manrope', sans-serif;
 $second-font-family: 'Forum', sans-serif;
 
 // Colors
-$white: 		#FFFFFF;
-$beige: 		#FCF6EC;
-$gold: 			#D5B584;
-$dark-blue: #122A44;
-$dark: 			#21180A;
-$black: 		#000000;
+$white: #ffffff;
+$beige: #fcf6ec;
+$gold: #d5b584;
+$dark-blue: #122a44;
+$light: #7e7c7b;
+$dark: #21180a;
+$black: #000000;
 
 // Main
-$primary: 	$dark;
-$secondary: #21180ACC;
-$accent: 		$gold;
+$primary: $dark;
+$secondary: #21180acc;
+$accent: $gold;
 
 // Background colors
-$light-bg-color: 	$beige;
-$dark-bg-color: 	$dark-blue;
+$light-bg-color: $beige;
+$dark-bg-color: $dark-blue;
 
 // Gradient
-$main-gradient: linear-gradient(204.42deg, #122A44 4.07%, #204A77 51.37%, #2D69AA 98.66%);;
+$main-gradient: linear-gradient(204.42deg, #122a44 4.07%, #204a77 51.37%, #2d69aa 98.66%);
 
 // Transition
 $base-transition: all 0.5s ease;

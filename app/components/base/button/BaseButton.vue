@@ -15,12 +15,11 @@ interface BaseButtonProps {
   loading?: boolean;
 }
 
-// props
 const props = withDefaults(defineProps<BaseButtonProps>(), {
   buttonType: 'button',
   disabled: false,
   emitLinkClick: false,
-  size: 'large',
+  size: 'medium',
   isFull: false,
   primary: true,
   secondary: false,
@@ -35,7 +34,6 @@ const emit = defineEmits<{
   (event: 'click'): void;
 }>();
 
-// refs and computed
 const buttonClasses = computed(() => ({
   [`btn--${props.size}`]: !!props.size,
   'btn--disabled': props.disabled,
@@ -49,21 +47,8 @@ const buttonClasses = computed(() => ({
   'btn--loading': props.loading,
 }));
 
-// Вычисляем общее состояние отключения
-const isDisabled = computed(() => props.disabled || props.loading);
-
-// functions
 const onClick = (event: Event) => {
-  // Блокируем клик, если кнопка выключена или идет загрузка
-  if (isDisabled.value) {
-    event.preventDefault();
-    return;
-  }
-
-  // Если это кнопка с type="button", предотвращаем отправку формы
-  if (props.buttonType === 'button') {
-    event.preventDefault();
-  }
+  emit('click');
 };
 </script>
 
@@ -76,7 +61,7 @@ const onClick = (event: Event) => {
     :type="buttonType"
     @click="onClick"
   >
-    <!-- Показываем лоадер, если loading=true -->
+    <!-- Show loader if loading=true -->
     <span v-if="loading" class="btn__loader">
       <span></span>
       <span></span>
@@ -108,8 +93,7 @@ const onClick = (event: Event) => {
   line-height: 24.32px;
   border: 1px solid transparent;
   border-radius: 12px;
-  color: $primary;
-  background: $accent;
+  background: $gold;
   transition: $base-transition;
   cursor: pointer;
 
@@ -119,17 +103,17 @@ const onClick = (event: Event) => {
 
   @include hover {
     background-color: $white;
-    border-color: $accent;
+    border-color: $gold;
   }
 
   &--disabled {
     opacity: 0.7;
   }
 
-  // Стиль при загрузке (блокируем курсор)
+  // Loading state style (block cursor)
   &--loading {
     cursor: not-allowed;
-    pointer-events: none; // Дополнительная защита от кликов
+    pointer-events: none; // Additional protection against clicks
     &:before {
       content: '';
       position: absolute;
@@ -148,15 +132,15 @@ const onClick = (event: Event) => {
   }
 
   &--small {
-    padding: 11px 20.5px;
+    padding: 11px;
   }
 
   &--medium {
-    padding: 14.5px 44.5px;
+    padding: 14px;
   }
 
   &--large {
-    padding: 14.5px 46px;
+    padding: 14px 20px;
   }
 
   &--full {
@@ -181,14 +165,9 @@ const onClick = (event: Event) => {
   }
 
   &--secondary {
-    border: 1px solid $accent;
-
-    color: $secondary;
+    border: 1px solid $gold;
     background: transparent;
-
-    &.btn--white {
-      background: rgba($white, 0.1);
-    }
+    color: $dark;
   }
 
   &--white {
@@ -202,7 +181,7 @@ const onClick = (event: Event) => {
     border: transparent;
 
     @include hover {
-      background: $light-gray;
+      background: $beige;
     }
   }
 
@@ -212,7 +191,7 @@ const onClick = (event: Event) => {
     background-color: transparent;
   }
 
-  // --- Лоадер (три точки) ---
+  // --- Loader (three dots) ---
   &__loader {
     display: flex;
     align-items: center;
@@ -222,7 +201,7 @@ const onClick = (event: Event) => {
     span {
       width: 6px;
       height: 6px;
-      background-color: currentColor; // Берет текущий цвет текста кнопки
+      background-color: currentColor; // Takes current button text color
       border-radius: 50%;
       display: inline-block;
       animation: bouncedelay 1.4s infinite ease-in-out both;
