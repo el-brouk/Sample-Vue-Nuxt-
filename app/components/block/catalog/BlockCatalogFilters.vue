@@ -2,6 +2,7 @@
 import type { FilterItem, SelectedFilter } from '~/model/filter';
 import type { SelectItem } from '~/model/form';
 
+const { t } = useI18n();
 const props = defineProps<{
   filters: FilterItem[];
   initialFilters?: SelectedFilter;
@@ -158,7 +159,7 @@ initializeFiltersFromRoute();
 <template>
   <div class="catalog-filters">
     <div class="catalog-filters__top">
-      <p class="catalog-filters__title">Фильтры</p>
+      <p class="catalog-filters__title">{{ t('catalog.filters') }}</p>
       <button class="catalog-filters__close visible-tablet" type="button" @click="closeFilters">
         <BaseIcon icon="close" />
       </button>
@@ -205,13 +206,18 @@ initializeFiltersFromRoute();
     </ul>
     <div class="catalog-form__controls">
       <p class="catalog-filters__error" v-if="!isSalaryValid">
-        Некорректный диапазон заработной платы
+        {{ t('catalog.priceRangeError') }}
       </p>
-      <BaseButton :disabled="!applyFiltersIsVisible" small is-full @click="applyFilters"
-        >Применить</BaseButton
-      >
-      <BaseButton :disabled="!resetFiltersIsVisible" secondary small is-full @click="resetFilters"
-        >Сбросить</BaseButton
+      <BaseButton :disabled="!applyFiltersIsVisible" small is-full @click="applyFilters">{{
+        t('catalog.apply')
+      }}</BaseButton>
+      <BaseButton
+        :disabled="!resetFiltersIsVisible"
+        secondary
+        small
+        is-full
+        @click="resetFilters"
+        >{{ t('catalog.reset') }}</BaseButton
       >
     </div>
   </div>

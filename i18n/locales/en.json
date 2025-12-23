@@ -1,0 +1,16 @@
+{
+  "header": {
+    "title": "Header"
+  },
+  "footer": {
+    "title": "Footer"
+  },
+  "catalog": {
+    "title": "Catalog",
+    "filters": "Filters",
+    "empty": "Products not found",
+    "apply": "Apply",
+    "reset": "Reset",
+    "priceRangeError": "Invalid price range"
+  }
+}

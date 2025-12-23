@@ -45,18 +45,32 @@ export default defineNuxtConfig({
 
   modules: [
     'nuxt-icons',
-    // management
+    '@nuxtjs/i18n',
     '@pinia/nuxt',
     '@vueuse/nuxt',
     '@vee-validate/nuxt',
     '@nuxtjs/device',
     'nuxt-splide',
     '@sidebase/nuxt-auth',
-    // todo: feat/localization
   ],
 
   veeValidate: {
     autoImports: true,
+  },
+
+  i18n: {
+    locales: [
+      { code: 'en', name: 'English', iso: 'en-US', file: 'en.json' },
+      { code: 'ru', name: 'Русский', iso: 'ru-RU', file: 'ru.json' },
+    ],
+    defaultLocale: 'ru',
+    // langDir: 'i18n/locales',
+    // lazy: true,
+    // vueI18n: './i18n.config.ts',
+    // detectBrowserLanguage: false,
+    // compilation: {
+    //   strictMessage: false,
+    // },
   },
 
   auth: {
@@ -113,6 +127,4 @@ export default defineNuxtConfig({
       },
     ],
   },
-
-  // todo: feat/localization
 });

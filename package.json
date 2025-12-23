@@ -12,6 +12,7 @@
   "dependencies": {
     "@nuxtjs/device": "^3.2.4",
     "@nuxtjs/eslint-module": "^4.1.0",
+    "@nuxtjs/i18n": "^10.2.1",
     "@pinia/nuxt": "^0.7.0",
     "@sidebase/nuxt-auth": "^0.10.0",
     "@typescript-eslint/eslint-plugin": "^8.15.0",
@@ -35,5 +36,8 @@
     "vue-router": "latest",
     "vue-tsc": "^2.1.10",
     "yup": "^1.4.0"
+  },
+  "resolutions": {
+    "node-sass": "npm:sass@1.77.8"
   }
 }

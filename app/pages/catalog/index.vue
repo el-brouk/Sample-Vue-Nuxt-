@@ -3,6 +3,7 @@ import type { Pagination } from '~/model/pagination';
 import type { ProductFilterRequest } from '~/api/catalog';
 import useCatalogStore from '~/store/catalog';
 
+const { t } = useI18n();
 definePageMeta({
   auth: false,
   layout: 'default',
@@ -100,7 +101,7 @@ async function fetchProducts() {
 <template>
   <div class="catalog-page">
     <div class="base-container">
-      <h1 class="page__title">Каталог</h1>
+      <h1 class="page__title">{{ t('catalog.title') }}</h1>
       <div class="catalog-page__inner" v-if="products?.length">
         <aside class="catalog-page__filters hidden-tablet">
           <BlockCatalogFilters
@@ -131,10 +132,10 @@ async function fetchProducts() {
           />
         </main>
       </div>
-      <p v-else class="catalog-page__empty">Товары не найдены</p>
+      <p v-else class="catalog-page__empty">{{ t('catalog.empty') }}</p>
     </div>
     <base-button class="catalog-page__filters-btn" type="button" @click="openFilters">
-      Фильтры
+      {{ t('catalog.filters') }}
     </base-button>
   </div>
 </template>

@@ -29,6 +29,10 @@ A modern, full-featured Nuxt 3 application built with TypeScript, featuring auth
 - **vue-final-modal** - Modal component for Vue 3
 - **nuxt-splide** - Carousel/slider component
 
+### Internationalization
+
+- **@nuxtjs/i18n** - Internationalization module for Nuxt 3
+
 ### Utilities
 
 - **maska** - Input mask library
@@ -79,6 +83,7 @@ Sample-Vue+Nuxt/
 │   │   ├── useApiFetch.ts      # API request composable
 │   │   ├── useDate.ts          # Date utilities
 │   │   ├── useDeclension.ts    # Word declension utilities
+│   │   ├── useLocale.ts        # Locale utilities (pickByLocale)
 │   │   ├── useModal.ts         # Modal management
 │   │   ├── usePrice.ts         # Price formatting
 │   │   ├── useScrollLock.ts    # Scroll lock utilities
@@ -114,6 +119,10 @@ Sample-Vue+Nuxt/
 │       ├── main.ts             # Main page data
 │       ├── security.ts         # Security/auth state
 │       └── seo.ts              # SEO metadata
+├── i18n/                       # Internationalization files
+│   └── locales/                # Translation files
+│       ├── ru.json             # Russian translations
+│       └── en.json             # English translations
 ├── public/                     # Public static files
 │   ├── assets/                 # Public assets (images, fonts)
 │   ├── favicon.ico
@@ -295,6 +304,9 @@ Reusable composables provide common functionality:
   - Lock/unlock page scrolling
   - Toggle scroll state
 - **useModal** - Modal management (currently minimal implementation)
+- **useLocale** - Locale utilities for internationalization
+  - `pickByLocale()` - Select value from locale map based on current locale
+  - Returns fallback value if current locale not found
 - **useUrlFilters** - URL-based filter management for catalog
   - Parse filters from URL query parameters
   - Apply filters to URL
@@ -363,13 +375,29 @@ Nuxt plugins extend application functionality:
 - **vue-awesome-paginate.ts** - Registers Vue Awesome Paginate component with styles
 - **vue-final-modal.ts** - Registers Vue Final Modal system for modals
 
-### Localization
+### Internationalization (i18n)
 
-The project includes Russian language support:
+The project uses `@nuxtjs/i18n` for internationalization support:
 
-- Russian month names in genitive case (Января, Февраля, etc.)
-- Word declension utilities for proper Russian grammar
-- Date formatting with Russian locale
+- **Supported Languages**:
+  - Russian (ru) - Default locale
+  - English (en)
+- **Translation Files**:
+  - Located in `i18n/locales/`
+  - JSON format with nested structure
+  - Current translations include: header, footer, catalog sections
+- **Usage in Components**:
+  - Use `useI18n()` composable to access translations
+  - Use `$t()` function for translation keys: `$t('catalog.title')`
+  - Use `locale` ref to get current locale: `const { locale } = useI18n()`
+- **Locale Utilities**:
+  - `useLocale` composable provides `pickByLocale()` helper
+  - Selects values from locale maps based on current locale
+  - Useful for locale-specific data structures
+- **Additional Russian Language Support**:
+  - Russian month names in genitive case (Января, Февраля, etc.) via `useDate`
+  - Word declension utilities for proper Russian grammar via `useDeclension`
+  - Date formatting with Russian locale
 
 ### Catalog System
 
@@ -412,7 +440,11 @@ The catalog page (`/catalog`) provides a full-featured product listing:
 - ✅ Input masking (Maska)
 - ✅ Icon library integration (Nuxt Icons)
 - ✅ Carousel/slider support (Nuxt Splide)
-- ✅ Russian language support (dates, declensions)
+- ✅ **Internationalization (i18n)** with @nuxtjs/i18n
+  - Multi-language support (Russian, English)
+  - Translation management via JSON files
+  - Locale utilities and helpers
+  - Russian language utilities (dates, declensions)
 - ✅ Price formatting utilities
 - ✅ Scroll lock management
 - ✅ Breadcrumb navigation
@@ -436,9 +468,14 @@ The catalog page (`/catalog`) provides a full-featured product listing:
   - `@vueuse/nuxt` - Composition utilities
   - `@vee-validate/nuxt` - Form validation
   - `@nuxtjs/device` - Device detection
+  - `@nuxtjs/i18n` - Internationalization
   - `@sidebase/nuxt-auth` - Authentication
   - `nuxt-icons` - Icon components
   - `nuxt-splide` - Carousel component
+- **i18n Configuration**:
+  - Default locale: Russian (ru)
+  - Supported locales: ru (ru-RU), en (en-US)
+  - Translation files: `i18n/locales/*.json`
 - **Authentication**:
   - Local provider configured
   - Token-based with 10-hour expiration
@@ -454,6 +491,7 @@ The catalog page (`/catalog`) provides a full-featured product listing:
 - [Vue 3 Documentation](https://vuejs.org/)
 - [Pinia Documentation](https://pinia.vuejs.org/)
 - [VeeValidate Documentation](https://vee-validate.logaretm.com/)
+- [Nuxt i18n Documentation](https://i18n.nuxtjs.org/)
 
 ## 🤝 Contributing
 
@@ -464,6 +502,8 @@ When contributing to this project, please ensure:
 - Styles use the SCSS helpers and variables
 - API calls use the `useApiFetch` composable
 - State management uses Pinia stores
+- Translations are added to both `ru.json` and `en.json` files
+- Use `useI18n()` composable for translations in components
 
 ## 📄 License
 

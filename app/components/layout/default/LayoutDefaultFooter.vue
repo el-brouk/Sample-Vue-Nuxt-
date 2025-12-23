@@ -1,10 +1,12 @@
 <script lang="ts" setup>
 import { ModalsContainer } from 'vue-final-modal';
+
+const { t } = useI18n();
 </script>
 
 <template>
   <footer class="footer">
-    <div class="base-container">футер</div>
+    <div class="base-container">{{ t('footer.title') }}</div>
   </footer>
   <!-- TODO: пока нет этого -->
   <!-- <base-cookie /> -->
